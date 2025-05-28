@@ -17,7 +17,6 @@ export class AlbumRepository {
   }
 
   create(body: Omit<IAlbum, 'id'>): Promise<IAlbum> {
-    console.log({ body });
     return this.db.create<IAlbum>(this.table, body);
   }
 
