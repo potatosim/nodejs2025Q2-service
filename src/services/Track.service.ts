@@ -4,8 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { TrackRepository } from 'src/repositories/Track.repository';
-import { ITrack } from 'src/types';
+import { ITrack, TrackRepository } from 'src/repositories/Track.repository';
 
 @Injectable()
 export class TrackService {
@@ -21,20 +20,17 @@ export class TrackService {
     const track = await this.tracksRepository.findById(id);
 
     if (!track) {
-      throw new NotFoundException("Album with such id doesn't exist");
+      throw new NotFoundException("Track with such id doesn't exist");
     }
 
     return track;
   }
 
   async createTrack(dto: Omit<ITrack, 'id'>): Promise<ITrack> {
-    const artistId = dto['artistId'] ? dto['artistId'] : null;
-    const albumId = dto['albumId'] ? dto['albumId'] : null;
-
     const tracks = await this.tracksRepository.create({
       ...dto,
-      artistId,
-      albumId,
+      artistId: dto.artistId ?? null,
+      albumId: dto.albumId ?? null,
     });
 
     return tracks;

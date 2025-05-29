@@ -9,7 +9,7 @@ import {
   Put,
   ValidationPipe,
 } from '@nestjs/common';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { TrackService } from 'src/services/Track.service';
 
 class CreateUpdateTrackDto {
@@ -19,7 +19,13 @@ class CreateUpdateTrackDto {
   @IsNotEmpty()
   @IsNumber()
   duration: number;
+
+  @IsOptional()
+  @IsString()
   artistId: string | null;
+
+  @IsOptional()
+  @IsString()
   albumId: string | null;
 }
 

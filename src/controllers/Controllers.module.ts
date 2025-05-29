@@ -4,6 +4,7 @@ import { UserController } from './User.controller';
 import { ArtistController } from './Artist.controller';
 import { AlbumController } from './Album.controller';
 import { TrackController } from './Track.controller';
+import { FavoritesController } from './Favorites.controller';
 
 @Module({
   imports: [ServicesModule],
@@ -12,6 +13,7 @@ import { TrackController } from './Track.controller';
     ArtistController,
     AlbumController,
     TrackController,
+    FavoritesController,
   ],
 })
 export class ControllersModule {}

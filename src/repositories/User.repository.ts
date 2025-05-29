@@ -1,6 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Database, DATABASE_TOKEN } from 'src/database/types';
-import { ICreateUserDto, IUser } from 'src/types';
+
+export interface IUser {
+  id: string;
+  login: string;
+  password: string;
+  version: number;
+  createdAt: number;
+  updatedAt: number;
+}
 
 @Injectable()
 export class UserRepository {
@@ -16,7 +24,7 @@ export class UserRepository {
     return this.db.findById<IUser>(this.table, id);
   }
 
-  create(body: ICreateUserDto): Promise<IUser> {
+  create(body: Pick<IUser, 'login' | 'password'>): Promise<IUser> {
     return this.db.create<IUser>(this.table, {
       ...body,
       createdAt: new Date().getTime(),

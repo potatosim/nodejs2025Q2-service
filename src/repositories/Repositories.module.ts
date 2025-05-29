@@ -4,6 +4,7 @@ import { DatabaseModule } from 'src/database/Database.module';
 import { ArtistRepository } from './Artist.repository';
 import { AlbumRepository } from './Album.repository';
 import { TrackRepository } from './Track.repository';
+import { FavoritesRepository } from './Favorites.repository';
 
 @Module({
   imports: [DatabaseModule],
@@ -12,8 +13,15 @@ import { TrackRepository } from './Track.repository';
     ArtistRepository,
     AlbumRepository,
     TrackRepository,
+    FavoritesRepository,
   ],
-  exports: [UserRepository, ArtistRepository, AlbumRepository, TrackRepository],
+  exports: [
+    UserRepository,
+    ArtistRepository,
+    AlbumRepository,
+    TrackRepository,
+    FavoritesRepository,
+  ],
 })
 export class RepositoriesModule {
   public constructor() {}

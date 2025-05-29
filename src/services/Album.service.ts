@@ -4,8 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AlbumRepository } from 'src/repositories/Album.repository';
-import { IAlbum } from 'src/types';
+import { AlbumRepository, IAlbum } from 'src/repositories/Album.repository';
 
 @Injectable()
 export class AlbumService {
@@ -28,8 +27,10 @@ export class AlbumService {
   }
 
   async createAlbum(dto: Omit<IAlbum, 'id'>): Promise<IAlbum> {
-    const artistId = dto['artistId'] ? dto['artistId'] : null;
-    const albums = await this.albumsRepository.create({ ...dto, artistId });
+    const albums = await this.albumsRepository.create({
+      ...dto,
+      artistId: dto.artistId ?? null,
+    });
 
     return albums;
   }

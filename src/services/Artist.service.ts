@@ -4,8 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ArtistRepository } from 'src/repositories/Artist.repository';
-import { IArtist } from 'src/types';
+import { ArtistRepository, IArtist } from 'src/repositories/Artist.repository';
 
 @Injectable()
 export class ArtistService {

@@ -1,4 +1,4 @@
-import { IUser } from 'src/types';
+import { IUser } from 'src/repositories/User.repository';
 
 export type IUserEntity = Omit<IUser, 'password'>;
 

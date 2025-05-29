@@ -42,4 +42,44 @@ export class InMemoryDatabase implements Database {
   async clear(table: string): Promise<void> {
     this.tables.set(table, new Map());
   }
+
+  async findOne<T>(table: string, filter: Partial<T>): Promise<T | null> {
+    const allTableRecords = await this.findAll<T>(table);
+
+    if (!allTableRecords.length) {
+      return null;
+    }
+
+    const targetRecord = allTableRecords.find((item) =>
+      Object.entries(filter).every(
+        ([filterKey, filterValue]) => item[filterKey] === filterValue,
+      ),
+    );
+
+    if (!targetRecord) {
+      return null;
+    }
+
+    return targetRecord;
+  }
+
+  async findMany<T>(table: string, filter: Partial<T>): Promise<T[] | null> {
+    const allTableRecords = await this.findAll<T>(table);
+
+    if (!allTableRecords.length) {
+      return null;
+    }
+
+    const targetRecords = allTableRecords.filter((item) =>
+      Object.entries(filter).every(
+        ([filterKey, filterValue]) => item[filterKey] === filterValue,
+      ),
+    );
+
+    if (!targetRecords.length) {
+      return null;
+    }
+
+    return targetRecords;
+  }
 }

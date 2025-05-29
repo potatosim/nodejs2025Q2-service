@@ -1,6 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Database, DATABASE_TOKEN } from 'src/database/types';
-import { IAlbum } from 'src/types';
+import { IArtist } from './Artist.repository';
+
+export interface IAlbum {
+  id: string;
+  name: string;
+  year: number;
+  artistId: IArtist['id'] | null; // refers to Artist
+}
 
 @Injectable()
 export class AlbumRepository {

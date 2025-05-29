@@ -1,6 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Database, DATABASE_TOKEN } from 'src/database/types';
-import { IArtist } from 'src/types';
+
+export interface IArtist {
+  id: string;
+  name: string;
+  grammy: boolean;
+}
 
 @Injectable()
 export class ArtistRepository {
@@ -17,7 +22,6 @@ export class ArtistRepository {
   }
 
   create(body: Omit<IArtist, 'id'>): Promise<IArtist> {
-    console.log({ body });
     return this.db.create<IArtist>(this.table, body);
   }
 

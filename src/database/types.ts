@@ -7,4 +7,6 @@ export interface Database {
   update<T>(table: string, id: string, data: Omit<T, 'id'>): Promise<T>;
   delete(table: string, id: string): Promise<void>;
   clear(table: string): Promise<void>;
+  findOne<T>(table: string, filter: Partial<T>): Promise<T | null>;
+  findMany<T>(table: string, filter: Partial<T>): Promise<T[] | null>;
 }

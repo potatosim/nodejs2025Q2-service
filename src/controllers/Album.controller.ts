@@ -9,7 +9,7 @@ import {
   Put,
   ValidationPipe,
 } from '@nestjs/common';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { AlbumService } from 'src/services/Album.service';
 
 class CreateUpdateAlbumDto {
@@ -18,6 +18,9 @@ class CreateUpdateAlbumDto {
   name: string;
   @IsNumber()
   year: number;
+
+  @IsOptional()
+  @IsString()
   artistId: string | null;
 }
 

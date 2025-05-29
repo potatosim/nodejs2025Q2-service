@@ -7,7 +7,16 @@ import {
 } from '@nestjs/common';
 import { IUserEntity, UserEntity } from 'src/entities/User.entiy';
 import { UserRepository } from 'src/repositories/User.repository';
-import { ICreateUserDto, IUpdateUserDto } from 'src/types';
+
+export interface ICreateUserDto {
+  login: string;
+  password: string;
+}
+
+export interface IUpdateUserDto {
+  oldPassword: string;
+  newPassword: string;
+}
 
 @Injectable()
 export class UserService {
