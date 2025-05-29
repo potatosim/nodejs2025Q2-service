@@ -34,4 +34,8 @@ export class AlbumRepository {
   delete(id: string): Promise<void> {
     return this.db.delete(this.table, id);
   }
+
+  findMany(dto: Partial<IAlbum>): Promise<IAlbum[] | null> {
+    return this.db.findMany<IAlbum>(this.table, dto);
+  }
 }

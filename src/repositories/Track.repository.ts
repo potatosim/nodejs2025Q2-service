@@ -36,4 +36,8 @@ export class TrackRepository {
   delete(id: string): Promise<void> {
     return this.db.delete(this.table, id);
   }
+
+  findMany(dto: Partial<ITrack>): Promise<ITrack[] | null> {
+    return this.db.findMany<ITrack>(this.table, dto);
+  }
 }

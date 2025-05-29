@@ -4,11 +4,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { FavoritesRepository } from 'src/repositories/Favorites.repository';
 import { ITrack, TrackRepository } from 'src/repositories/Track.repository';
 
 @Injectable()
 export class TrackService {
-  public constructor(private readonly tracksRepository: TrackRepository) {}
+  public constructor(
+    private readonly tracksRepository: TrackRepository,
+    private readonly favoritesRepository: FavoritesRepository,
+  ) {}
 
   async getAllTracks(): Promise<ITrack[]> {
     const tracks = await this.tracksRepository.findAll();
@@ -54,8 +58,16 @@ export class TrackService {
     if (!track) {
       throw new NotFoundException();
     }
-
     await this.tracksRepository.delete(id);
+
+    const itemToDeleteInFavorites = await this.favoritesRepository.findOne({
+      type: 'tracks',
+      targetId: id,
+    });
+
+    if (itemToDeleteInFavorites) {
+      await this.favoritesRepository.delete(itemToDeleteInFavorites.id);
+    }
 
     throw new HttpException(null, HttpStatus.NO_CONTENT);
   }

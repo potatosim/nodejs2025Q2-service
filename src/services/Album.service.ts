@@ -5,10 +5,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AlbumRepository, IAlbum } from 'src/repositories/Album.repository';
+import { FavoritesRepository } from 'src/repositories/Favorites.repository';
+import { TrackRepository } from 'src/repositories/Track.repository';
 
 @Injectable()
 export class AlbumService {
-  public constructor(private readonly albumsRepository: AlbumRepository) {}
+  public constructor(
+    private readonly albumsRepository: AlbumRepository,
+    private readonly favoritesRepository: FavoritesRepository,
+    private readonly tracksRepository: TrackRepository,
+  ) {}
 
   async getAllAlbums(): Promise<IAlbum[]> {
     const albums = await this.albumsRepository.findAll();
@@ -55,6 +61,30 @@ export class AlbumService {
     }
 
     await this.albumsRepository.delete(id);
+
+    const tracksToUpdate = await this.tracksRepository.findMany({
+      albumId: id,
+    });
+
+    if (tracksToUpdate && tracksToUpdate.length) {
+      await Promise.all(
+        tracksToUpdate.map((track) =>
+          this.tracksRepository.update(track.id, {
+            ...track,
+            albumId: null,
+          }),
+        ),
+      );
+    }
+
+    const itemToDeleteInFavorites = await this.favoritesRepository.findOne({
+      type: 'albums',
+      targetId: id,
+    });
+
+    if (itemToDeleteInFavorites) {
+      await this.favoritesRepository.delete(itemToDeleteInFavorites.id);
+    }
 
     throw new HttpException(null, HttpStatus.NO_CONTENT);
   }
