@@ -9,26 +9,9 @@ import {
   Put,
   ValidationPipe,
 } from '@nestjs/common';
-import { IsNotEmpty, IsString } from 'class-validator';
-import { UserService } from 'src/services/User.service';
-
-class CreateUserDto {
-  @IsString()
-  @IsNotEmpty({ message: 'Name is required' })
-  login: string;
-  @IsString()
-  @IsNotEmpty({ message: 'Password is required' })
-  password: string;
-}
-
-class UpdateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  oldPassword: string;
-  @IsString()
-  @IsNotEmpty()
-  newPassword: string;
-}
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {

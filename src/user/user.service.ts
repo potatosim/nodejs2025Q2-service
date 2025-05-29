@@ -5,49 +5,50 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { IUserEntity, UserEntity } from 'src/entities/User.entiy';
-import { UserRepository } from 'src/repositories/User.repository';
-
-export interface ICreateUserDto {
-  login: string;
-  password: string;
-}
-
-export interface IUpdateUserDto {
-  oldPassword: string;
-  newPassword: string;
-}
+import { UserRepository } from './user.repository';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UserService {
   public constructor(private readonly usersRepository: UserRepository) {}
 
-  async getAllUsers(): Promise<IUserEntity[]> {
+  async getAllUsers(): Promise<UserResponseDto[]> {
     const users = await this.usersRepository.findAll();
 
-    return users.map((user) => new UserEntity(user).get());
+    return users.map((user) =>
+      plainToInstance(UserResponseDto, user, {
+        excludeExtraneousValues: true,
+      }),
+    );
   }
 
-  async getById(id: string): Promise<IUserEntity> {
+  async getById(id: string): Promise<UserResponseDto> {
     const user = await this.usersRepository.findById(id);
 
     if (!user) {
       throw new NotFoundException("User with such id doesn't exist");
     }
 
-    return new UserEntity(user).get();
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  async createUser(dto: ICreateUserDto): Promise<IUserEntity> {
+  async createUser(dto: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.usersRepository.create(dto);
 
-    return new UserEntity(user).get();
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async updateUserPassword(
     id: string,
-    dto: IUpdateUserDto,
-  ): Promise<IUserEntity> {
+    dto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
     const user = await this.usersRepository.findById(id);
 
     if (!user) {
@@ -63,10 +64,12 @@ export class UserService {
       password: dto.newPassword,
     });
 
-    return new UserEntity(updatedUser).get();
+    return plainToInstance(UserResponseDto, updatedUser, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  async deleteUser(id: string) {
+  async deleteUser(id: string): Promise<void> {
     const user = await this.usersRepository.findById(id);
 
     if (!user) {

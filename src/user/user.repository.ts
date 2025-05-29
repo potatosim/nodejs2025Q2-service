@@ -1,14 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Database, DATABASE_TOKEN } from 'src/database/types';
-
-export interface IUser {
-  id: string;
-  login: string;
-  password: string;
-  version: number;
-  createdAt: number;
-  updatedAt: number;
-}
+import { User } from './user.entity';
 
 @Injectable()
 export class UserRepository {
@@ -16,16 +8,16 @@ export class UserRepository {
 
   public constructor(@Inject(DATABASE_TOKEN) private readonly db: Database) {}
 
-  findAll(): Promise<IUser[]> {
-    return this.db.findAll<IUser>(this.table);
+  findAll(): Promise<User[]> {
+    return this.db.findAll<User>(this.table);
   }
 
-  findById(id: string): Promise<IUser | undefined> {
-    return this.db.findById<IUser>(this.table, id);
+  findById(id: string): Promise<User | undefined> {
+    return this.db.findById<User>(this.table, id);
   }
 
-  create(body: Pick<IUser, 'login' | 'password'>): Promise<IUser> {
-    return this.db.create<IUser>(this.table, {
+  create(body: Pick<User, 'login' | 'password'>): Promise<User> {
+    return this.db.create<User>(this.table, {
       ...body,
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
@@ -33,8 +25,8 @@ export class UserRepository {
     });
   }
 
-  update(id: string, body: Omit<IUser, 'id'>): Promise<IUser> {
-    return this.db.update<IUser>(this.table, id, {
+  update(id: string, body: Omit<User, 'id'>): Promise<User> {
+    return this.db.update<User>(this.table, id, {
       ...body,
       version: body.version + 1,
       updatedAt: new Date().getTime(),
