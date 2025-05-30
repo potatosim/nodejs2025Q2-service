@@ -15,6 +15,7 @@ import { FavoriteResponseDto } from './dto/favorite-response.dto';
 import { AlbumRepository } from 'src/album/album.repository';
 import { ArtistRepository } from 'src/artist/artist.repository';
 import { TrackRepository } from 'src/track/track.repository';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class FavoritesService {
@@ -63,7 +64,7 @@ export class FavoritesService {
     });
   }
 
-  async delete(type: Favorite['type'], id: string): Promise<void> {
+  async delete(type: Favorite['type'], id: string): Promise<HttpException> {
     const targetRecord = await this.favoritesRepository.findOne({
       type,
       targetId: id,
@@ -92,5 +93,26 @@ export class FavoritesService {
       default:
         return null;
     }
+  }
+
+  @OnEvent('track.delete')
+  private async handleTrackDelete(trackId: string) {
+    try {
+      await this.delete('tracks', trackId);
+    } catch {}
+  }
+
+  @OnEvent('album.delete')
+  private async handleAlbumDelete(albumId: string) {
+    try {
+      await this.delete('albums', albumId);
+    } catch {}
+  }
+
+  @OnEvent('artist.delete')
+  private async handleArtistDelete(artistId: string) {
+    try {
+      await this.delete('artists', artistId);
+    } catch {}
   }
 }

@@ -9,10 +9,14 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { AlbumResponseDto } from './dto/album-response.dto';
 import { plainToInstance } from 'class-transformer';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AlbumService {
-  public constructor(private readonly albumsRepository: AlbumRepository) {}
+  public constructor(
+    private readonly albumsRepository: AlbumRepository,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async getAllAlbums(): Promise<AlbumResponseDto[]> {
     const albums = await this.albumsRepository.findAll();
@@ -43,7 +47,6 @@ export class AlbumService {
     id: string,
     dto: UpdateAlbumDto,
   ): Promise<AlbumResponseDto> {
-    console.log(id, dto);
     const album = await this.albumsRepository.findById(id);
 
     if (!album) {
@@ -67,30 +70,26 @@ export class AlbumService {
 
     await this.albumsRepository.delete(id);
 
-    // const tracksToUpdate = await this.tracksRepository.findMany({
-    //   albumId: id,
-    // });
-
-    // if (tracksToUpdate && tracksToUpdate.length) {
-    //   await Promise.all(
-    //     tracksToUpdate.map((track) =>
-    //       this.tracksRepository.update(track.id, {
-    //         ...track,
-    //         albumId: null,
-    //       }),
-    //     ),
-    //   );
-    // }
-
-    // const itemToDeleteInFavorites = await this.favoritesRepository.findOne({
-    //   type: 'albums',
-    //   targetId: id,
-    // });
-
-    // if (itemToDeleteInFavorites) {
-    //   await this.favoritesRepository.delete(itemToDeleteInFavorites.id);
-    // }
+    this.eventEmitter.emit('album.delete', id);
 
     throw new HttpException(null, HttpStatus.NO_CONTENT);
+  }
+
+  @OnEvent('artist.delete')
+  private async handleArtistDelete(artistId: string) {
+    const albumsToUpdate = await this.albumsRepository.findMany({
+      artistId,
+    });
+
+    if (albumsToUpdate && albumsToUpdate.length) {
+      await Promise.all(
+        albumsToUpdate.map((album) =>
+          this.albumsRepository.update(album.id, {
+            ...album,
+            artistId: null,
+          }),
+        ),
+      );
+    }
   }
 }

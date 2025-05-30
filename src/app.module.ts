@@ -5,9 +5,11 @@ import { TrackModule } from './track/track.module';
 import { AlbumModule } from './album/album.module';
 import { ArtistModule } from './artist/artist.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot(),
     UserModule,
     TrackModule,

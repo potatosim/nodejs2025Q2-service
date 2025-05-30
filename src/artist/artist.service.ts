@@ -9,10 +9,14 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ArtistResponseDto } from './dto/artist-response.dto';
 import { plainToInstance } from 'class-transformer';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ArtistService {
-  public constructor(private readonly artistsRepository: ArtistRepository) {}
+  public constructor(
+    private readonly artistsRepository: ArtistRepository,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async getAllArtists(): Promise<ArtistResponseDto[]> {
     const artists = await this.artistsRepository.findAll();
@@ -63,44 +67,7 @@ export class ArtistService {
 
     await this.artistsRepository.delete(id);
 
-    // const tracksToUpdate = await this.tracksRepository.findMany({
-    //   artistId: id,
-    // });
-
-    // if (tracksToUpdate && tracksToUpdate.length) {
-    //   await Promise.all(
-    //     tracksToUpdate.map((track) =>
-    //       this.tracksRepository.update(track.id, {
-    //         ...track,
-    //         artistId: null,
-    //       }),
-    //     ),
-    //   );
-    // }
-
-    // const albumsToUpdate = await this.albumsRepository.findMany({
-    //   artistId: id,
-    // });
-
-    // if (albumsToUpdate && albumsToUpdate.length) {
-    //   await Promise.all(
-    //     albumsToUpdate.map((album) =>
-    //       this.albumsRepository.update(album.id, {
-    //         ...album,
-    //         artistId: null,
-    //       }),
-    //     ),
-    //   );
-    // }
-
-    // const itemToDeleteInFavorites = await this.favoritesRepository.findOne({
-    //   type: 'artists',
-    //   targetId: id,
-    // });
-
-    // if (itemToDeleteInFavorites) {
-    //   await this.favoritesRepository.delete(itemToDeleteInFavorites.id);
-    // }
+    this.eventEmitter.emit('artist.delete', id);
 
     throw new HttpException(null, HttpStatus.NO_CONTENT);
   }
