@@ -9,16 +9,9 @@ import {
   Put,
   ValidationPipe,
 } from '@nestjs/common';
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
-import { ArtistService } from 'src/services/Artist.service';
-
-class CreateUpdateArtistDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-  @IsBoolean()
-  grammy: boolean;
-}
+import { ArtistService } from './artist.service';
+import { CreateArtistDto } from './dto/create-artist.dto';
+import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Controller('artist')
 export class ArtistController {
@@ -44,7 +37,7 @@ export class ArtistController {
         whitelist: true,
       }),
     )
-    body: CreateUpdateArtistDto,
+    body: CreateArtistDto,
   ) {
     return this.artistsService.createArtist(body);
   }
@@ -53,7 +46,7 @@ export class ArtistController {
   updateArtist(
     @Param('id', new ParseUUIDPipe())
     id: string,
-    @Body(new ValidationPipe()) updateArtistDto: CreateUpdateArtistDto,
+    @Body(new ValidationPipe()) updateArtistDto: UpdateArtistDto,
   ) {
     return this.artistsService.updateArtist(id, updateArtistDto);
   }

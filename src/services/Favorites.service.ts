@@ -7,7 +7,8 @@ import {
 } from '@nestjs/common';
 import { Album } from 'src/album/album.entity';
 import { AlbumRepository } from 'src/album/album.repository';
-import { ArtistRepository, IArtist } from 'src/repositories/Artist.repository';
+import { Artist } from 'src/artist/artist.entity';
+import { ArtistRepository } from 'src/artist/artist.repository';
 import {
   FavoritesRepository,
   IFavoriteItem,
@@ -78,7 +79,7 @@ export class FavoritesService {
   private getRecordByType(
     type: keyof IFavorites,
     id: string,
-  ): Promise<Track | Album | IArtist | null> {
+  ): Promise<Track | Album | Artist | null> {
     switch (type) {
       case 'albums':
         return this.albumRepository.findById(id);
