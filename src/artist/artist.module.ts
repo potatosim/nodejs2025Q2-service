@@ -8,5 +8,6 @@ import { ArtistRepository } from './artist.repository';
   imports: [DatabaseModule],
   controllers: [ArtistController],
   providers: [ArtistRepository, ArtistService],
+  exports: [ArtistRepository],
 })
 export class ArtistModule {}

@@ -6,27 +6,26 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { Album } from 'src/album/album.entity';
-import { AlbumRepository } from 'src/album/album.repository';
 import { Artist } from 'src/artist/artist.entity';
-import { ArtistRepository } from 'src/artist/artist.repository';
-import {
-  FavoritesRepository,
-  IFavoriteItem,
-  IFavorites,
-} from 'src/repositories/Favorites.repository';
+import { FavoritesRepository } from 'src/favorites/favorites.repository';
 import { Track } from 'src/track/track.entity';
+import { FavoritesResponseDto } from './dto/favorites-response.dto';
+import { Favorite } from './favorite.entity';
+import { FavoriteResponseDto } from './dto/favorite-response.dto';
+import { AlbumRepository } from 'src/album/album.repository';
+import { ArtistRepository } from 'src/artist/artist.repository';
 import { TrackRepository } from 'src/track/track.repository';
 
 @Injectable()
 export class FavoritesService {
   public constructor(
     private readonly favoritesRepository: FavoritesRepository,
-    private readonly artistRepository: ArtistRepository,
     private readonly albumRepository: AlbumRepository,
+    private readonly artistRepository: ArtistRepository,
     private readonly trackRepository: TrackRepository,
   ) {}
 
-  async getAllFavorites(): Promise<any> {
+  async getAllFavorites(): Promise<FavoritesResponseDto> {
     const { albums, artists, tracks } =
       await this.favoritesRepository.findAll();
 
@@ -48,7 +47,10 @@ export class FavoritesService {
     };
   }
 
-  async create(type: keyof IFavorites, id: string): Promise<IFavoriteItem> {
+  async create(
+    type: Favorite['type'],
+    id: string,
+  ): Promise<FavoriteResponseDto> {
     const record = await this.getRecordByType(type, id);
 
     if (!record) {
@@ -61,7 +63,7 @@ export class FavoritesService {
     });
   }
 
-  async delete(type: keyof IFavorites, id: string): Promise<IFavoriteItem> {
+  async delete(type: Favorite['type'], id: string): Promise<void> {
     const targetRecord = await this.favoritesRepository.findOne({
       type,
       targetId: id,
@@ -77,7 +79,7 @@ export class FavoritesService {
   }
 
   private getRecordByType(
-    type: keyof IFavorites,
+    type: Favorite['type'],
     id: string,
   ): Promise<Track | Album | Artist | null> {
     switch (type) {

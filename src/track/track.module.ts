@@ -8,5 +8,6 @@ import { TrackRepository } from './track.repository';
   imports: [DatabaseModule],
   controllers: [TrackController],
   providers: [TrackRepository, TrackService],
+  exports: [TrackRepository],
 })
 export class TrackModule {}

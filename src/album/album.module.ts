@@ -8,5 +8,6 @@ import { AlbumRepository } from './album.repository';
   imports: [DatabaseModule],
   controllers: [AlbumController],
   providers: [AlbumRepository, AlbumService],
+  exports: [AlbumRepository],
 })
 export class AlbumModule {}

@@ -6,7 +6,7 @@ import {
   ParseUUIDPipe,
   Post,
 } from '@nestjs/common';
-import { FavoritesService } from 'src/services/Favorites.service';
+import { FavoritesService } from './favorites.service';
 
 @Controller('favs')
 export class FavoritesController {
