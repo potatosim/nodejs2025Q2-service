@@ -9,20 +9,9 @@ import {
   Put,
   ValidationPipe,
 } from '@nestjs/common';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { AlbumService } from 'src/services/Album.service';
-
-class CreateUpdateAlbumDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-  @IsNumber()
-  year: number;
-
-  @IsOptional()
-  @IsString()
-  artistId: string | null;
-}
+import { CreateAlbumDto } from './dto/create-album.dto';
+import { UpdateAlbumDto } from './dto/update-album.dto';
+import { AlbumService } from './album.service';
 
 @Controller('album')
 export class AlbumController {
@@ -48,7 +37,7 @@ export class AlbumController {
         whitelist: true,
       }),
     )
-    body: CreateUpdateAlbumDto,
+    body: CreateAlbumDto,
   ) {
     return this.albumsService.createAlbum(body);
   }
@@ -57,7 +46,7 @@ export class AlbumController {
   updateAlbum(
     @Param('id', new ParseUUIDPipe())
     id: string,
-    @Body(new ValidationPipe()) updateAlbumDto: CreateUpdateAlbumDto,
+    @Body(new ValidationPipe()) updateAlbumDto: UpdateAlbumDto,
   ) {
     return this.albumsService.updateAlbum(id, updateAlbumDto);
   }

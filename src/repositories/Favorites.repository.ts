@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Database, DATABASE_TOKEN } from 'src/database/types';
 import { IArtist } from './Artist.repository';
-import { IAlbum } from './Album.repository';
-import { ITrack } from './Track.repository';
+import { Track } from 'src/track/track.entity';
+import { Album } from 'src/album/album.entity';
 
 export interface IFavorites {
   artists: IArtist['id'][];
-  albums: IAlbum['id'][];
-  tracks: ITrack['id'][];
+  albums: Album['id'][];
+  tracks: Track['id'][];
 }
 
 export interface IFavoriteItem {

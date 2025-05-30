@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AlbumRepository } from 'src/repositories/Album.repository';
+import { AlbumRepository } from 'src/album/album.repository';
 import { ArtistRepository, IArtist } from 'src/repositories/Artist.repository';
 import { FavoritesRepository } from 'src/repositories/Favorites.repository';
-import { TrackRepository } from 'src/repositories/Track.repository';
+import { TrackRepository } from 'src/track/track.repository';
 
 @Injectable()
 export class ArtistService {

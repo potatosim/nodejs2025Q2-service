@@ -5,14 +5,16 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { AlbumRepository, IAlbum } from 'src/repositories/Album.repository';
+import { Album } from 'src/album/album.entity';
+import { AlbumRepository } from 'src/album/album.repository';
 import { ArtistRepository, IArtist } from 'src/repositories/Artist.repository';
 import {
   FavoritesRepository,
   IFavoriteItem,
   IFavorites,
 } from 'src/repositories/Favorites.repository';
-import { ITrack, TrackRepository } from 'src/repositories/Track.repository';
+import { Track } from 'src/track/track.entity';
+import { TrackRepository } from 'src/track/track.repository';
 
 @Injectable()
 export class FavoritesService {
@@ -76,7 +78,7 @@ export class FavoritesService {
   private getRecordByType(
     type: keyof IFavorites,
     id: string,
-  ): Promise<ITrack | IAlbum | IArtist | null> {
+  ): Promise<Track | Album | IArtist | null> {
     switch (type) {
       case 'albums':
         return this.albumRepository.findById(id);

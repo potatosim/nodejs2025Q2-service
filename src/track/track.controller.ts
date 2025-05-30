@@ -9,25 +9,9 @@ import {
   Put,
   ValidationPipe,
 } from '@nestjs/common';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { TrackService } from 'src/services/Track.service';
-
-class CreateUpdateTrackDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-  @IsNotEmpty()
-  @IsNumber()
-  duration: number;
-
-  @IsOptional()
-  @IsString()
-  artistId: string | null;
-
-  @IsOptional()
-  @IsString()
-  albumId: string | null;
-}
+import { TrackService } from './track.service';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { UpdateTrackDto } from './dto/update-track.dto';
 
 @Controller('track')
 export class TrackController {
@@ -53,7 +37,7 @@ export class TrackController {
         whitelist: true,
       }),
     )
-    body: CreateUpdateTrackDto,
+    body: CreateTrackDto,
   ) {
     return this.trackService.createTrack(body);
   }
@@ -62,7 +46,7 @@ export class TrackController {
   updateTrack(
     @Param('id', new ParseUUIDPipe())
     id: string,
-    @Body(new ValidationPipe()) updateTrackDto: CreateUpdateTrackDto,
+    @Body(new ValidationPipe()) updateTrackDto: UpdateTrackDto,
   ) {
     return this.trackService.updateTrack(id, updateTrackDto);
   }
