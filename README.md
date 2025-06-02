@@ -5,11 +5,16 @@
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
 
-## Downloading
+## Clone the repository
 
 ```
-git clone {repository URL}
+git clone https://github.com/potatosim/nodejs2025Q2-service.git
+git checkout development
 ```
+
+## Environment variables
+
+- copy .env.example file and rename it to .env
 
 ## Installing NPM modules
 
@@ -27,9 +32,17 @@ After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
+## Create a collection in Postman
+
+Import api.yaml to Postman.
+
+> **_NOTE:_** only track, user, album, favs, artist endpoints are workable in a scope of the first part of the task.
+
 ## Testing
 
 After application running open new terminal and enter:
+
+> ⚠️ **_NOTE:_** Please, make sure that the app is running and you are going to ron tests in a new separate terminal!
 
 To run all tests without authorization
 
@@ -42,6 +55,8 @@ To run only one of all test suites
 ```
 npm run test -- <path to suite>
 ```
+
+> **_NOTE:_** you don't need to run tests, related to auth, refresh in a scope oh the first part of this task!
 
 To run all test with authorization
 
