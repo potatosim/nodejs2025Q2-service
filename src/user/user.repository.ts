@@ -1,39 +1,62 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Database, DATABASE_TOKEN } from 'src/database/types';
-import { User } from './user.entity';
+import { PrismaService } from 'src/database/Prisma.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserRepository {
   private readonly table = 'users';
 
-  public constructor(@Inject(DATABASE_TOKEN) private readonly db: Database) {}
+  public constructor(
+    @Inject(DATABASE_TOKEN) private readonly db: Database,
+    private readonly prismaService: PrismaService,
+  ) {}
 
-  findAll(): Promise<User[]> {
-    return this.db.findAll<User>(this.table);
+  async findAll(): Promise<User[]> {
+    const users = await this.prismaService.user.findMany();
+
+    return users;
   }
 
-  findById(id: string): Promise<User | undefined> {
-    return this.db.findById<User>(this.table, id);
-  }
-
-  create(body: Pick<User, 'login' | 'password'>): Promise<User> {
-    return this.db.create<User>(this.table, {
-      ...body,
-      createdAt: new Date().getTime(),
-      updatedAt: new Date().getTime(),
-      version: 1,
+  async findById(id: string): Promise<User | null> {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
     });
+
+    return user;
   }
 
-  update(id: string, body: Omit<User, 'id'>): Promise<User> {
-    return this.db.update<User>(this.table, id, {
-      ...body,
-      version: body.version + 1,
-      updatedAt: new Date().getTime(),
+  async create(body: Pick<User, 'login' | 'password'>): Promise<User> {
+    const user = await this.prismaService.user.create({
+      data: {
+        ...body,
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime(),
+        version: 1,
+      },
     });
+
+    return user;
   }
 
-  delete(id: string): Promise<void> {
-    return this.db.delete(this.table, id);
+  async update(id: string, body: Omit<User, 'id'>): Promise<User> {
+    const user = await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        ...body,
+        updatedAt: new Date().getTime(),
+        version: { increment: 1 },
+      },
+    });
+
+    return user;
+  }
+
+  async delete(id: string): Promise<User> {
+    return await this.prismaService.user.delete({ where: { id } });
   }
 }
