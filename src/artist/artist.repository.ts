@@ -4,8 +4,6 @@ import { Artist } from '@prisma/client';
 
 @Injectable()
 export class ArtistRepository {
-  private readonly table = 'artists';
-
   public constructor(private readonly prismaService: PrismaService) {}
 
   async findAll(): Promise<Artist[]> {

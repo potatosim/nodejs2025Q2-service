@@ -1,34 +1,63 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Database, DATABASE_TOKEN } from 'src/database/types';
-import { Album } from './album.entity';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/Prisma.service';
+import { Album } from '@prisma/client';
 
 @Injectable()
 export class AlbumRepository {
-  private readonly table = 'albums';
+  public constructor(private readonly prismaService: PrismaService) {}
 
-  public constructor(@Inject(DATABASE_TOKEN) private readonly db: Database) {}
+  async findAll(): Promise<Album[]> {
+    const albums = await this.prismaService.album.findMany();
 
-  findAll(): Promise<Album[]> {
-    return this.db.findAll<Album>(this.table);
+    return albums;
   }
 
-  findById(id: string): Promise<Album | undefined> {
-    return this.db.findById<Album>(this.table, id);
+  async findById(id: string): Promise<Album | undefined> {
+    const album = await this.prismaService.album.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return album;
   }
 
-  create(body: Omit<Album, 'id'>): Promise<Album> {
-    return this.db.create<Album>(this.table, body);
+  async create(body: Omit<Album, 'id'>): Promise<Album> {
+    const album = await this.prismaService.album.create({
+      data: {
+        ...body,
+      },
+    });
+
+    return album;
   }
 
-  update(id: string, body: Omit<Album, 'id'>): Promise<Album> {
-    return this.db.update<Album>(this.table, id, body);
+  async update(id: string, body: Omit<Album, 'id'>): Promise<Album> {
+    const album = await this.prismaService.album.update({
+      where: {
+        id,
+      },
+      data: {
+        ...body,
+      },
+    });
+
+    return album;
   }
 
-  delete(id: string): Promise<void> {
-    return this.db.delete(this.table, id);
+  async delete(id: string): Promise<Album> {
+    return await this.prismaService.album.delete({
+      where: {
+        id,
+      },
+    });
   }
 
-  findMany(dto: Partial<Album>): Promise<Album[] | null> {
-    return this.db.findMany<Album>(this.table, dto);
+  async findMany(dto: Partial<Album>): Promise<Album[] | null> {
+    return await this.prismaService.album.findMany({
+      where: {
+        ...dto,
+      },
+    });
   }
 }
