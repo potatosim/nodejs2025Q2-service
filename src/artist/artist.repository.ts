@@ -1,30 +1,55 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Database, DATABASE_TOKEN } from 'src/database/types';
-import { Artist } from './artist.entity';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/Prisma.service';
+import { Artist } from '@prisma/client';
 
 @Injectable()
 export class ArtistRepository {
   private readonly table = 'artists';
 
-  public constructor(@Inject(DATABASE_TOKEN) private readonly db: Database) {}
+  public constructor(private readonly prismaService: PrismaService) {}
 
-  findAll(): Promise<Artist[]> {
-    return this.db.findAll<Artist>(this.table);
+  async findAll(): Promise<Artist[]> {
+    const artists = await this.prismaService.artist.findMany();
+
+    return artists;
   }
 
-  findById(id: string): Promise<Artist | undefined> {
-    return this.db.findById<Artist>(this.table, id);
+  async findById(id: string): Promise<Artist | null> {
+    const artist = await this.prismaService.artist.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return artist;
   }
 
-  create(body: Omit<Artist, 'id'>): Promise<Artist> {
-    return this.db.create<Artist>(this.table, body);
+  async create(body: Omit<Artist, 'id'>): Promise<Artist> {
+    const artist = await this.prismaService.artist.create({
+      data: {
+        ...body,
+      },
+    });
+
+    return artist;
   }
 
-  update(id: string, body: Omit<Artist, 'id'>): Promise<Artist> {
-    return this.db.update<Artist>(this.table, id, body);
+  async update(id: string, body: Omit<Artist, 'id'>): Promise<Artist> {
+    const artist = await this.prismaService.artist.update({
+      where: {
+        id,
+      },
+      data: {
+        ...body,
+      },
+    });
+
+    return artist;
   }
 
-  delete(id: string): Promise<void> {
-    return this.db.delete(this.table, id);
+  async delete(id: string): Promise<Artist> {
+    return await this.prismaService.artist.delete({
+      where: { id },
+    });
   }
 }

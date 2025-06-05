@@ -1,5 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Database, DATABASE_TOKEN } from 'src/database/types';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/Prisma.service';
 import { User } from '@prisma/client';
 
@@ -7,10 +6,7 @@ import { User } from '@prisma/client';
 export class UserRepository {
   private readonly table = 'users';
 
-  public constructor(
-    @Inject(DATABASE_TOKEN) private readonly db: Database,
-    private readonly prismaService: PrismaService,
-  ) {}
+  public constructor(private readonly prismaService: PrismaService) {}
 
   async findAll(): Promise<User[]> {
     const users = await this.prismaService.user.findMany();
