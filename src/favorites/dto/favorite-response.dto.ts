@@ -1,5 +1,6 @@
 export class FavoriteResponseDto {
   id: string;
-  targetId: string;
-  type: 'artists' | 'albums' | 'tracks';
+  trackId: string | null;
+  albumId: string | null;
+  artistId: string | null;
 }

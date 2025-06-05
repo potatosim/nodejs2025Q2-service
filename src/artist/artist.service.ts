@@ -9,14 +9,10 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ArtistResponseDto } from './dto/artist-response.dto';
 import { plainToInstance } from 'class-transformer';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ArtistService {
-  public constructor(
-    private readonly artistsRepository: ArtistRepository,
-    private readonly eventEmitter: EventEmitter2,
-  ) {}
+  public constructor(private readonly artistsRepository: ArtistRepository) {}
 
   async getAllArtists(): Promise<ArtistResponseDto[]> {
     const artists = await this.artistsRepository.findAll();
@@ -66,8 +62,6 @@ export class ArtistService {
     }
 
     await this.artistsRepository.delete(id);
-
-    this.eventEmitter.emit('artist.delete', id);
 
     throw new HttpException(null, HttpStatus.NO_CONTENT);
   }

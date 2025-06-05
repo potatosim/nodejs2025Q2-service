@@ -9,14 +9,10 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { AlbumResponseDto } from './dto/album-response.dto';
 import { plainToInstance } from 'class-transformer';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AlbumService {
-  public constructor(
-    private readonly albumsRepository: AlbumRepository,
-    private readonly eventEmitter: EventEmitter2,
-  ) {}
+  public constructor(private readonly albumsRepository: AlbumRepository) {}
 
   async getAllAlbums(): Promise<AlbumResponseDto[]> {
     const albums = await this.albumsRepository.findAll();
@@ -70,26 +66,6 @@ export class AlbumService {
 
     await this.albumsRepository.delete(id);
 
-    this.eventEmitter.emit('album.delete', id);
-
     throw new HttpException(null, HttpStatus.NO_CONTENT);
-  }
-
-  @OnEvent('artist.delete')
-  private async handleArtistDelete(artistId: string) {
-    const albumsToUpdate = await this.albumsRepository.findMany({
-      artistId,
-    });
-
-    if (albumsToUpdate && albumsToUpdate.length) {
-      await Promise.all(
-        albumsToUpdate.map((album) =>
-          this.albumsRepository.update(album.id, {
-            ...album,
-            artistId: null,
-          }),
-        ),
-      );
-    }
   }
 }
