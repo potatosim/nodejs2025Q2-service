@@ -1,39 +1,103 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Database, DATABASE_TOKEN } from 'src/database/types';
-import { Favorite } from './favorite.entity';
+import { Favorite, Prisma } from '@prisma/client';
+
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/Prisma.service';
+
+export type FavoriteType = 'artists' | 'albums' | 'tracks';
 
 @Injectable()
 export class FavoritesRepository {
-  private readonly table = 'favorites';
+  public constructor(private readonly prismaService: PrismaService) {}
 
-  public constructor(@Inject(DATABASE_TOKEN) private readonly db: Database) {}
-
-  async findAll(): Promise<Record<Favorite['type'], string[]>> {
-    const records = await this.db.findAll<Favorite>(this.table);
-
-    return records.reduce<Record<Favorite['type'], string[]>>(
-      (acc, cur) => {
-        acc[cur.type] = [...acc[cur.type], cur.targetId];
-
-        return acc;
+  async findAll(): Promise<
+    Array<
+      Prisma.FavoriteGetPayload<{
+        include: {
+          album: true;
+          artist: true;
+          track: true;
+        };
+      }>
+    >
+  > {
+    const favorites = await this.prismaService.favorite.findMany({
+      include: {
+        album: true,
+        artist: true,
+        track: true,
       },
-      {
-        albums: [],
-        artists: [],
-        tracks: [],
-      } as Record<Favorite['type'], string[]>,
-    );
+    });
+
+    return favorites;
   }
 
-  async create(dto: Omit<Favorite, 'id'>): Promise<Favorite> {
-    return this.db.create<Favorite>(this.table, dto);
+  async create(type: FavoriteType, id: string): Promise<Favorite> {
+    const createDto = this.getCreateFavoriteDto(type, id);
+
+    const favorite = await this.prismaService.favorite.create({
+      data: {
+        ...createDto,
+      },
+    });
+
+    return favorite;
   }
 
-  async findOne(dto: Partial<Favorite>): Promise<Favorite | null> {
-    return this.db.findOne<Favorite>(this.table, dto);
+  async findOne(type: FavoriteType, id: string): Promise<Favorite | null> {
+    const findFavoriteDto = this.getFindFavoriteDto(type, id);
+
+    const favorite = await this.prismaService.favorite.findUnique({
+      where: {
+        ...findFavoriteDto,
+      },
+    });
+
+    return favorite;
   }
 
-  async delete(id: string): Promise<void> {
-    return this.db.delete(this.table, id);
+  async delete(id: string): Promise<Favorite> {
+    return await this.prismaService.favorite.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
+  private getCreateFavoriteDto(
+    type: FavoriteType,
+    id: string,
+  ): Omit<Favorite, 'id'> {
+    switch (type) {
+      case 'albums':
+        return { albumId: id, artistId: null, trackId: null };
+      case 'artists':
+        return { artistId: id, albumId: null, trackId: null };
+      case 'tracks':
+        return {
+          trackId: id,
+          albumId: null,
+          artistId: null,
+        };
+      default:
+        return null as never;
+    }
+  }
+
+  private getFindFavoriteDto(
+    type: FavoriteType,
+    id: string,
+  ): Prisma.FavoriteFindUniqueArgs['where'] {
+    switch (type) {
+      case 'albums':
+        return { albumId: id };
+      case 'artists':
+        return { artistId: id };
+      case 'tracks':
+        return {
+          trackId: id,
+        };
+      default:
+        return null as never;
+    }
   }
 }

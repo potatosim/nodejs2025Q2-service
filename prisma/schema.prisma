@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String @id @default(uuid())
+  login     String
+  password  String
+  createdAt BigInt
+  updatedAt BigInt
+  version   Int
+}
+
+model Artist {
+  id       String    @id @default(uuid())
+  name     String
+  grammy   Boolean
+  Album    Album[]
+  Track    Track[]
+  Favorite Favorite?
+}
+
+model Album {
+  id       String  @id @default(uuid())
+  name     String
+  year     Int
+  artistId String?
+
+  artist   Artist?   @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  tracks   Track[]
+  Favorite Favorite?
+}
+
+model Track {
+  id       String  @id @default(uuid())
+  name     String
+  duration Int
+  artistId String?
+  albumId  String?
+
+  artist   Artist?   @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  album    Album?    @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  Favorite Favorite?
+}
+
+model Favorite {
+  id String @id @default(uuid())
+
+  artistId String? @unique
+  albumId  String? @unique
+  trackId  String? @unique
+
+  artist Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  album  Album?  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  track  Track?  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+}

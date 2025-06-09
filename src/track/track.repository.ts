@@ -1,34 +1,39 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Database, DATABASE_TOKEN } from 'src/database/types';
-import { Track } from './track.entity';
+import { Injectable } from '@nestjs/common';
+import { Track } from '@prisma/client';
+import { PrismaService } from 'src/database/Prisma.service';
 
 @Injectable()
 export class TrackRepository {
-  private readonly table = 'tracks';
+  public constructor(private readonly prismaService: PrismaService) {}
 
-  public constructor(@Inject(DATABASE_TOKEN) private readonly db: Database) {}
-
-  findAll(): Promise<Track[]> {
-    return this.db.findAll<Track>(this.table);
+  async findAll(): Promise<Track[]> {
+    const tracks = await this.prismaService.track.findMany();
+    return tracks;
   }
 
-  findById(id: string): Promise<Track | undefined> {
-    return this.db.findById<Track>(this.table, id);
+  async findById(id: string): Promise<Track | undefined> {
+    const track = await this.prismaService.track.findUnique({ where: { id } });
+    return track;
   }
 
-  create(body: Omit<Track, 'id'>): Promise<Track> {
-    return this.db.create<Track>(this.table, body);
+  async create(body: Omit<Track, 'id'>): Promise<Track> {
+    const track = await this.prismaService.track.create({ data: { ...body } });
+    return track;
   }
 
-  update(id: string, body: Omit<Track, 'id'>): Promise<Track> {
-    return this.db.update<Track>(this.table, id, body);
+  async update(id: string, body: Omit<Track, 'id'>): Promise<Track> {
+    const track = await this.prismaService.track.update({
+      where: { id },
+      data: { ...body },
+    });
+    return track;
   }
 
-  delete(id: string): Promise<void> {
-    return this.db.delete(this.table, id);
+  async delete(id: string): Promise<Track> {
+    return await this.prismaService.track.delete({ where: { id } });
   }
 
-  findMany(dto: Partial<Track>): Promise<Track[] | null> {
-    return this.db.findMany<Track>(this.table, dto);
+  async findMany(dto: Partial<Track>): Promise<Track[] | null> {
+    return await this.prismaService.track.findMany({ where: { ...dto } });
   }
 }
