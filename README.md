@@ -34,10 +34,20 @@ npm run start:dev
 
 Before running the application install docker (https://docs.docker.com/engine/install/)
 
-Run the next script to build and run database and application container based on the images in docker-compose + watch mode(if there are any changes into src folder):
+# Development mode (to check that application is restarting upon changes implemented into src folder):
+
+Run the next script to build and run database and application container based on the images in docker-compose.dev + watch mode(if there are any changes into src folder):
 
 ```
-npm run docker:run
+npm run docker:run-dev
+```
+
+# Production mode (to check that container auto restart after crash):
+
+Run the next script to build and run database and application container based on the images in docker-compose.prod (you can throw new error in bootstrap fn, for example):
+
+```
+npm run docker:run-prod
 ```
 
 Command to check docker image size:

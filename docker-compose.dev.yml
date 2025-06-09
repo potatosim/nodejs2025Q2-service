@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: db
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    image: potatosim/postgres:latest
+    restart: on-failure
+    env_file:
+      - .env
+    networks:
+      - my-network
+    volumes:
+      - ./volumes/db:/var/lib/postgresql/data
+      - ./volumes/db_logs:/var/lib/postgresql/logs
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    command: postgres -c logging_collector=on -c log_directory=/var/lib/postgresql/logs -c log_statement=all
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: potatosim/nodejs2025q2-service-app-dev:latest
+    ports:
+      - '${PORT}:${PORT}'
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${CONTAINER_DATABASE_URL}
+    restart: on-failure
+    working_dir: /app
+    networks:
+      - my-network
+    depends_on:
+      db:
+        condition: service_healthy
+    develop:
+      watch:
+        - path: ./src
+          target: /app/src
+          action: sync
+
+networks:
+  my-network:
+    driver: bridge

@@ -17,6 +17,6 @@ COPY tsconfig*.json ./
 COPY package*.json ./
 COPY /prisma /app/prisma
 COPY /src /app/src
-COPY entrypoint.sh /app/entrypoint.sh
+COPY entrypoint.dev.sh /app/entrypoint.dev.sh
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.dev.sh"]
