@@ -33,7 +33,7 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    return plainToInstance(SignUpResponseDto, { userId: user.id });
+    return plainToInstance(SignUpResponseDto, { id: user.id });
   }
 
   async login(dto: LoginDto): Promise<AuthResponseDto> {

@@ -6,5 +6,5 @@ export class SignUpResponseDto {
   @Expose()
   @IsString()
   @IsNotEmpty()
-  userId: string;
+  id: string;
 }
