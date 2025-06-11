@@ -68,16 +68,20 @@ export class AuthService {
       throw new UnauthorizedException('Please, provide refresh token');
     }
 
-    const payload = await this.jwtService.verifyAsync<TokenPayload>(
-      dto.refreshToken,
-      {
-        secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
-      },
-    );
+    try {
+      const payload = await this.jwtService.verifyAsync<TokenPayload>(
+        dto.refreshToken,
+        {
+          secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
+        },
+      );
 
-    const tokens = await this.generateTokens(payload);
+      const tokens = await this.generateTokens(payload);
 
-    return plainToInstance(AuthResponseDto, tokens);
+      return plainToInstance(AuthResponseDto, tokens);
+    } catch {
+      throw new ForbiddenException('Invalid refresh token');
+    }
   }
 
   private async generateTokens(

@@ -28,16 +28,9 @@ export class AuthGuard implements CanActivate {
       .trim();
 
     try {
-      const isTokenValid = await this.jwtService.verifyAsync(
-        parsedAuthorizationHeader,
-        {
-          secret: this.configService.get('JWT_SECRET_KEY'),
-        },
-      );
-
-      if (!isTokenValid) {
-        throw new UnauthorizedException('Invalid access token');
-      }
+      await this.jwtService.verifyAsync(parsedAuthorizationHeader, {
+        secret: this.configService.get('JWT_SECRET_KEY'),
+      });
     } catch {
       throw new UnauthorizedException('Invalid access token');
     }
