@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/Prisma.service';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class UserRepository {
@@ -52,5 +52,11 @@ export class UserRepository {
 
   async delete(id: string): Promise<User> {
     return await this.prismaService.user.delete({ where: { id } });
+  }
+
+  async findOne(dto: Prisma.UserFindFirstArgs): Promise<User | null> {
+    const user = await this.prismaService.user.findFirst(dto);
+
+    return user;
   }
 }
