@@ -1,28 +1,39 @@
-# Home Library Service
+# 📚 **Home Library Service**
 
-## Prerequisites
+A Node.js REST API for managing a home library service.
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+---
 
-## Clone the repository
+## ⚙ **Prerequisites**
 
-```
+- [Git](https://git-scm.com/downloads) — download & install.
+- [Node.js](https://nodejs.org/en/download/) — includes `npm`.
+- [Docker](https://docs.docker.com/engine/install/) — required for DB & containerized runs.
+
+---
+
+## 🚀 **Clone the repository**
+
+```bash
 git clone https://github.com/potatosim/nodejs2025Q2-service.git
-git checkout feature/part-2
+cd nodejs2025Q2-service
+git checkout feature/part-3
 ```
 
-## Environment variables
+---
 
-- copy .env.example file and rename it to .env
+## 🌱 **Setup environment variables**
 
-## Installing and running the application locally
+- Copy `.env.example` → rename to `.env`
+- Edit if necessary.
 
-> ⚠️ **_NOTE:_** Please, note that these steps are not a requirement for the second part etc., just FYI
+---
 
-`DATABASE_URL` is used if you are going to run the application locally, but in this case you need to run the next scripts:
+## 🖥 **Run locally**
 
-```
+> ⚠️ **Note:** Before starting the app locally, run these scripts:
+
+```bash
 npm install
 npm run docker:build-postgres
 npm run docker:run-postgres
@@ -30,96 +41,68 @@ npm run prisma:migrate
 npm run start:dev
 ```
 
-## Installing and running app/db containers:
+---
 
-Before running the application install docker (https://docs.docker.com/engine/install/)
+## 🐳 **Run with Docker**
 
-# Development mode (to check that application is restarting upon changes implemented into src folder):
+### Development mode
 
-Run the next script to build and run database and application container based on the images in docker-compose.dev + watch mode(if there are any changes into src folder):
+Runs app & DB containers, with auto-reload on source changes:
 
-```
+```bash
 npm run docker:run-dev
 ```
 
-# Production mode (to check that container auto restart after crash):
+### Production mode
 
-Run the next script to build and run database and application container based on the images in docker-compose.prod (you can throw new error in bootstrap fn, for example):
+Runs app & DB containers, checks auto-restart on crash:
 
-```
+```bash
 npm run docker:run-prod
 ```
 
-Command to check docker image size:
+---
 
-```
-docker image ls
-```
+## ✅ **Testing**
 
-To run all previous tests open new terminal and enter:
+> ⚠️ **Note:** Make sure the app is running. Open a new terminal for tests.
 
-> ⚠️ **_NOTE:_** Please, make sure that the app is running and you are going to run tests in a new separate terminal
+### Run all tests with authorization:
 
-```
-npm run test
-```
-
-Script for vulnerabilities scanning:
-
-```
-npm run docker:scan
-```
-
-## Create a collection in Postman
-
-Import api.yaml to Postman.
-
-> **_NOTE:_** only track, user, album, favs, artist endpoints are workable in a scope of the first-second part of the task.
-
-## Testing
-
-After application running open new terminal and enter:
-
-> ⚠️ **_NOTE:_** Please, make sure that the app is running and you are going to ron tests in a new separate terminal!
-
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-> **_NOTE:_** you don't need to run tests, related to auth, refresh in a scope oh the first-second parts of this task!
-
-To run all test with authorization
-
-```
+```bash
 npm run test:auth
 ```
 
-To run only specific test suite with authorization
+### Refresh tests:
 
+```bash
+npm run test:refresh
 ```
+
+### Run a specific test suite:
+
+```bash
 npm run test:auth -- <path to suite>
 ```
 
-### Auto-fix and format
+---
 
-```
+## 🛠 **Linting & formatting**
+
+```bash
 npm run lint
-```
-
-```
 npm run format
 ```
 
-### Debugging in VSCode
+---
 
-Press <kbd>F5</kbd> to debug.
+## 📬 **API testing**
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+Import `api.yaml` into Postman to test API endpoints.
+
+---
+
+## 🐞 **Debugging in VSCode**
+
+- Press F5 to start debugging.
+- More info: [VSCode debugging docs](https://code.visualstudio.com/docs/editor/debugging)
