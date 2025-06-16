@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { AuthGuard } from 'src/auth.quard';
+import { AuthGuard } from 'src/guards/auth.quard';
 
 @Controller('favs')
 @UseGuards(AuthGuard)

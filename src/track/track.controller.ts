@@ -13,7 +13,7 @@ import {
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { AuthGuard } from 'src/auth.quard';
+import { AuthGuard } from 'src/guards/auth.quard';
 
 @Controller('track')
 @UseGuards(AuthGuard)

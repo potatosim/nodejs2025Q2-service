@@ -13,7 +13,7 @@ import {
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { AlbumService } from './album.service';
-import { AuthGuard } from 'src/auth.quard';
+import { AuthGuard } from 'src/guards/auth.quard';
 
 @Controller('album')
 @UseGuards(AuthGuard)

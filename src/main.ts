@@ -1,8 +1,9 @@
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { setupSwagger } from './swagger';
 import { LoggingService } from './logger/logging.service';
+import { ExceptionFilter } from './exceptionFilter/exception-filter';
 
 const DEFAULT_PORT = 4000;
 
@@ -13,6 +14,8 @@ async function bootstrap() {
 
   const logger = app.get(LoggingService);
   app.useLogger(logger);
+
+  app.useGlobalFilters(new ExceptionFilter(app.get(HttpAdapterHost), logger));
 
   process.on('uncaughtException', (err) => {
     logger.error(`Uncaught Exception: ${err.message}`);
