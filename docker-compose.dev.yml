@@ -43,6 +43,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
     develop:
       watch:
         - path: ./src
